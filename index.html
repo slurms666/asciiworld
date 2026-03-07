@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alien ASCII World</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="asciiCanvas" aria-label="ASCII alien world renderer"></canvas>
+
+  <div id="uiPanel">
+    <h1>Alien ASCII World</h1>
+    <p class="subtitle">Procedural open world prototype rendered with text glyphs.</p>
+
+    <div class="seedRow">
+      <label for="seedInput">Seed</label>
+      <input id="seedInput" type="text" maxlength="48" spellcheck="false" />
+      <button id="applySeedBtn" type="button">New Seed</button>
+    </div>
+
+    <p class="controls">WASD move | Mouse look | Click world to lock cursor | Esc unlock</p>
+
+    <div id="hud">
+      <div><span class="k">Seed:</span> <span id="hudSeed">-</span></div>
+      <div><span class="k">Position:</span> <span id="hudCoords">0, 0</span></div>
+      <div><span class="k">Biome:</span> <span id="hudBiome">-</span></div>
+      <div><span class="k">Landmark:</span> <span id="hudLandmark">None</span></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
