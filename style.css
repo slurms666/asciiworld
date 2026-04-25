@@ -17,9 +17,12 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  overscroll-behavior: none;
   font-family: "Cascadia Mono", "Consolas", "Courier New", monospace;
   background: radial-gradient(circle at 12% 10%, #24342e 0%, #101822 45%, #070b12 100%);
   color: var(--ink);
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 body::before {
@@ -39,12 +42,13 @@ body::before {
   height: 100%;
   display: block;
   cursor: crosshair;
+  touch-action: none;
 }
 
 #uiPanel {
   position: fixed;
-  top: 16px;
-  left: 16px;
+  top: max(16px, env(safe-area-inset-top));
+  left: max(16px, env(safe-area-inset-left));
   width: min(460px, calc(100vw - 32px));
   padding: 14px 14px 12px;
   border: 1px solid var(--panel-edge);
@@ -55,12 +59,46 @@ body::before {
   z-index: 10;
 }
 
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 h1 {
   margin: 0;
   font-size: 1.15rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--accent);
+}
+
+#panelToggle {
+  flex: 0 0 auto;
+  min-width: 46px;
+  padding: 6px 8px;
+  border: 1px solid rgba(157, 255, 177, 0.5);
+  border-radius: 6px;
+  background: rgba(10, 28, 27, 0.78);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+}
+
+#panelToggle:active,
+.moveBtn:active {
+  transform: translateY(1px);
+}
+
+#uiPanel.is-collapsed {
+  width: auto;
+  max-width: calc(100vw - 32px);
+}
+
+#uiPanel.is-collapsed #panelBody {
+  display: none;
 }
 
 .subtitle {
@@ -92,6 +130,8 @@ h1 {
   border: 1px solid rgba(167, 255, 226, 0.42);
   border-radius: 6px;
   background: rgba(9, 24, 27, 0.75);
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 #seedInput:focus {
@@ -132,11 +172,59 @@ h1 {
   color: #9feab7;
 }
 
+#mobileControls {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: none;
+  grid-template-columns: repeat(3, 58px);
+  grid-template-rows: repeat(3, 58px);
+  gap: 8px;
+  z-index: 12;
+  touch-action: none;
+}
+
+.moveBtn {
+  border: 1px solid rgba(151, 241, 208, 0.42);
+  border-radius: 8px;
+  background: rgba(8, 20, 24, 0.72);
+  color: #d8ffe8;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+  font: 700 1rem "Cascadia Mono", "Consolas", "Courier New", monospace;
+  backdrop-filter: blur(4px);
+  touch-action: none;
+}
+
+.moveBtn.is-active {
+  border-color: rgba(157, 255, 177, 0.9);
+  background: rgba(35, 86, 59, 0.82);
+}
+
+.moveBtn.up {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.moveBtn.left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.moveBtn.down {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.moveBtn.right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
 @media (max-width: 860px) {
   #uiPanel {
-    width: calc(100vw - 24px);
-    top: 12px;
-    left: 12px;
+    width: min(380px, calc(100vw - 24px));
+    top: max(12px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
     padding: 12px;
   }
 
@@ -151,5 +239,52 @@ h1 {
 
   #applySeedBtn {
     justify-self: start;
+  }
+}
+
+@media (max-width: 700px), (pointer: coarse) {
+  #mobileControls {
+    display: grid;
+  }
+
+  #uiPanel {
+    max-height: calc(100svh - 150px);
+    overflow: auto;
+  }
+
+  #uiPanel:not(.is-collapsed) {
+    background: rgba(8, 20, 24, 0.88);
+  }
+
+  h1 {
+    max-width: 220px;
+    font-size: 0.92rem;
+  }
+
+  .subtitle,
+  .controls,
+  #hud,
+  .seedRow label,
+  #seedInput,
+  #applySeedBtn {
+    font-size: 0.78rem;
+  }
+
+  #seedInput,
+  #applySeedBtn,
+  #panelToggle {
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 420px) {
+  #mobileControls {
+    grid-template-columns: repeat(3, 50px);
+    grid-template-rows: repeat(3, 50px);
+    gap: 7px;
+  }
+
+  h1 {
+    max-width: 180px;
   }
 }

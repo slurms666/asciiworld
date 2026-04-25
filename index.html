@@ -10,23 +10,36 @@
   <canvas id="asciiCanvas" aria-label="ASCII alien world renderer"></canvas>
 
   <div id="uiPanel">
-    <h1>Alien ASCII World</h1>
-    <p class="subtitle">Procedural open world prototype rendered with text glyphs.</p>
-
-    <div class="seedRow">
-      <label for="seedInput">Seed</label>
-      <input id="seedInput" type="text" maxlength="48" spellcheck="false" />
-      <button id="applySeedBtn" type="button">New Seed</button>
+    <div class="panelHeader">
+      <h1>Alien ASCII World</h1>
+      <button id="panelToggle" type="button" aria-expanded="true" aria-controls="panelBody">Min</button>
     </div>
 
-    <p class="controls">WASD move | Mouse look | Click world to lock cursor | Esc unlock</p>
+    <div id="panelBody">
+      <p class="subtitle">Procedural open world prototype rendered with text glyphs.</p>
 
-    <div id="hud">
-      <div><span class="k">Seed:</span> <span id="hudSeed">-</span></div>
-      <div><span class="k">Position:</span> <span id="hudCoords">0, 0</span></div>
-      <div><span class="k">Biome:</span> <span id="hudBiome">-</span></div>
-      <div><span class="k">Landmark:</span> <span id="hudLandmark">None</span></div>
+      <div class="seedRow">
+        <label for="seedInput">Seed</label>
+        <input id="seedInput" type="text" maxlength="48" spellcheck="false" autocomplete="off" />
+        <button id="applySeedBtn" type="button">New Seed</button>
+      </div>
+
+      <p class="controls">WASD move | Mouse drag or phone drag to look | Click world to lock cursor | Esc unlock</p>
+
+      <div id="hud">
+        <div><span class="k">Seed:</span> <span id="hudSeed">-</span></div>
+        <div><span class="k">Position:</span> <span id="hudCoords">0, 0</span></div>
+        <div><span class="k">Biome:</span> <span id="hudBiome">-</span></div>
+        <div><span class="k">Signal:</span> <span id="hudLandmark">None</span></div>
+      </div>
     </div>
+  </div>
+
+  <div id="mobileControls" aria-label="Movement controls">
+    <button class="moveBtn up" type="button" data-forward="1" data-right="0" aria-label="Move forward">W</button>
+    <button class="moveBtn left" type="button" data-forward="0" data-right="-1" aria-label="Move left">A</button>
+    <button class="moveBtn down" type="button" data-forward="-1" data-right="0" aria-label="Move backward">S</button>
+    <button class="moveBtn right" type="button" data-forward="0" data-right="1" aria-label="Move right">D</button>
   </div>
 
   <script src="script.js"></script>

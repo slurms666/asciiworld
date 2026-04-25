@@ -5,6 +5,9 @@
   // DOM REFERENCES
   // ---------------------------------------------------------------------------
   const canvas = document.getElementById("asciiCanvas");
+  const uiPanel = document.getElementById("uiPanel");
+  const panelToggle = document.getElementById("panelToggle");
+  const mobileControls = document.getElementById("mobileControls");
   const seedInput = document.getElementById("seedInput");
   const applySeedBtn = document.getElementById("applySeedBtn");
   const hudSeed = document.getElementById("hudSeed");
@@ -124,8 +127,180 @@
         feature: [183, 154, 123],
         rock: [186, 168, 154]
       }
+    },
+    {
+      id: "prismatic_reefs",
+      name: "Prismatic Reefs",
+      centroid: [-0.52, 0.04],
+      groundChars: [".", ",", ":", ";"],
+      liquidChars: ["~", "=", "o"],
+      featureChars: ["*", "x", "+", "%"],
+      rockChars: ["#", "%", "&", "8"],
+      colors: {
+        ground: [66, 96, 118],
+        liquid: [89, 214, 255],
+        feature: [255, 112, 218],
+        rock: [116, 177, 220]
+      }
+    },
+    {
+      id: "storm_hives",
+      name: "Storm Hives",
+      centroid: [0.52, -0.72],
+      groundChars: [".", "`", ":", ","],
+      liquidChars: ["_", "-", "~"],
+      featureChars: ["X", "V", "Y", "!"],
+      rockChars: ["@", "#", "M", "%"],
+      colors: {
+        ground: [86, 83, 122],
+        liquid: [121, 164, 221],
+        feature: [255, 229, 112],
+        rock: [146, 132, 174]
+      }
     }
   ];
+
+  // Extra flora rules per biome to keep each region distinct and alive.
+  const BIOME_FLORA = {
+    crystal_plains: {
+      density: 0.58,
+      glow: 0.22,
+      tallChars: ["Y", "A", "|", "/", "\\"],
+      lowChars: ["*", "+", ":", ";"],
+      colors: [
+        [129, 255, 236],
+        [162, 245, 255],
+        [203, 255, 246]
+      ]
+    },
+    toxic_marsh: {
+      density: 0.71,
+      glow: 0.12,
+      tallChars: ["f", "t", "|", "Y", "!"],
+      lowChars: [";", ",", "i", ":"],
+      colors: [
+        [139, 206, 99],
+        [162, 232, 111],
+        [111, 170, 83]
+      ]
+    },
+    fungal_forests: {
+      density: 0.83,
+      glow: 0.07,
+      tallChars: ["T", "Y", "m", "w", "|"],
+      lowChars: ["n", "u", ";", ":", "i"],
+      colors: [
+        [223, 140, 112],
+        [194, 116, 162],
+        [255, 183, 141]
+      ]
+    },
+    ash_deserts: {
+      density: 0.44,
+      glow: 0.05,
+      tallChars: ["^", "A", "n", "v", "|"],
+      lowChars: ["`", ".", ",", ":"],
+      colors: [
+        [202, 158, 116],
+        [224, 171, 135],
+        [181, 139, 100]
+      ]
+    },
+    glowing_ruins: {
+      density: 0.52,
+      glow: 0.24,
+      tallChars: ["H", "|", "+", "#", "A"],
+      lowChars: ["=", "-", "_", ":"],
+      colors: [
+        [131, 240, 207],
+        [164, 255, 232],
+        [122, 208, 228]
+      ]
+    },
+    acid_lakes: {
+      density: 0.62,
+      glow: 0.2,
+      tallChars: ["!", "i", "|", "t", "Y"],
+      lowChars: ["~", ";", ":", "."],
+      colors: [
+        [182, 255, 149],
+        [132, 235, 172],
+        [215, 255, 180]
+      ]
+    },
+    rocky_wastelands: {
+      density: 0.48,
+      glow: 0.05,
+      tallChars: ["A", "^", "M", "|", "#"],
+      lowChars: [".", ",", ":", ";"],
+      colors: [
+        [197, 169, 147],
+        [171, 148, 128],
+        [223, 194, 158]
+      ]
+    },
+    prismatic_reefs: {
+      density: 0.76,
+      glow: 0.23,
+      tallChars: ["X", "Y", "*", "|", "%"],
+      lowChars: ["x", "+", ".", ":"],
+      colors: [
+        [255, 109, 218],
+        [105, 231, 255],
+        [255, 236, 126]
+      ]
+    },
+    storm_hives: {
+      density: 0.57,
+      glow: 0.18,
+      tallChars: ["V", "Y", "X", "!", "|"],
+      lowChars: ["v", "x", ":", ";"],
+      colors: [
+        [255, 228, 103],
+        [188, 157, 255],
+        [116, 214, 235]
+      ]
+    }
+  };
+
+  const BIOME_CREATURES = {
+    crystal_plains: [
+      { name: "Shard Skitter", chars: ["k", "K"], color: [178, 255, 245], speed: 1.2 },
+      { name: "Glass Manta", chars: ["m", "M"], color: [206, 242, 255], speed: 0.7 }
+    ],
+    toxic_marsh: [
+      { name: "Bog Floater", chars: ["q", "Q"], color: [184, 255, 104], speed: 0.8 },
+      { name: "Needle Leech", chars: ["s", "S"], color: [101, 220, 93], speed: 1.4 }
+    ],
+    fungal_forests: [
+      { name: "Sporeback", chars: ["b", "B"], color: [255, 150, 132], speed: 0.6 },
+      { name: "Cap Prowler", chars: ["r", "R"], color: [220, 127, 205], speed: 1.0 }
+    ],
+    ash_deserts: [
+      { name: "Cinder Wisp", chars: ["c", "C"], color: [255, 175, 98], speed: 1.1 },
+      { name: "Dune Strider", chars: ["h", "H"], color: [228, 192, 137], speed: 0.9 }
+    ],
+    glowing_ruins: [
+      { name: "Rune Drone", chars: ["d", "D"], color: [147, 255, 225], speed: 1.5 },
+      { name: "Vault Sentinel", chars: ["g", "G"], color: [205, 255, 171], speed: 0.45 }
+    ],
+    acid_lakes: [
+      { name: "Acid Piper", chars: ["p", "P"], color: [181, 255, 149], speed: 1.2 },
+      { name: "Brine Eye", chars: ["e", "E"], color: [226, 255, 163], speed: 0.5 }
+    ],
+    rocky_wastelands: [
+      { name: "Ridge Crawler", chars: ["a", "A"], color: [225, 185, 147], speed: 0.9 },
+      { name: "Basalt Grazer", chars: ["u", "U"], color: [195, 173, 158], speed: 0.55 }
+    ],
+    prismatic_reefs: [
+      { name: "Neon Polliwog", chars: ["j", "J"], color: [95, 235, 255], speed: 1.45 },
+      { name: "Prism Grazer", chars: ["z", "Z"], color: [255, 117, 224], speed: 0.75 }
+    ],
+    storm_hives: [
+      { name: "Static Imp", chars: ["v", "V"], color: [255, 231, 111], speed: 1.7 },
+      { name: "Hive Walker", chars: ["w", "W"], color: [184, 160, 255], speed: 0.85 }
+    ]
+  };
 
   // ---------------------------------------------------------------------------
   // GENERAL HELPERS
@@ -168,6 +343,14 @@
       clamp(Math.round(color[0] * factor), 0, 255),
       clamp(Math.round(color[1] * factor), 0, 255),
       clamp(Math.round(color[2] * factor), 0, 255)
+    ];
+  }
+
+  function offsetColor(color, dr, dg, db) {
+    return [
+      clamp(Math.round(color[0] + dr), 0, 255),
+      clamp(Math.round(color[1] + dg), 0, 255),
+      clamp(Math.round(color[2] + db), 0, 255)
     ];
   }
 
@@ -376,6 +559,34 @@
           };
         }
 
+        case "prismatic_reefs": {
+          const shelves = n.ridged(x * 0.018, z * 0.018, 4);
+          const lagoons = Math.pow(1 - shelves, 2.2) * 13;
+          const coral = clamp((n.value(x * 0.065 + 14, z * 0.065 - 43) - 0.62) * 3.6, 0, 1) * 17;
+          const shimmer = Math.sin(x * 0.028 + z * 0.017) * 3.5;
+          return {
+            ground: 17 + shelves * 18 + shimmer - lagoons,
+            water: 18 + n.fbm(x * 0.004, z * 0.004, 2) * 3,
+            feature: coral,
+            rough: clamp(shelves + coral / 22, 0, 1),
+            activity: coral + shelves * 8
+          };
+        }
+
+        case "storm_hives": {
+          const cells = n.ridged(x * 0.031, z * 0.031, 4);
+          const storm = n.fbm(x * 0.012 - 70, z * 0.012 + 51, 4) * 11;
+          const towers = Math.pow(clamp((cells - 0.48) * 2.2, 0, 1), 2.4) * 24;
+          const forks = clamp((n.value(x * 0.11 + 9, z * 0.11 - 18) - 0.86) * 7, 0, 1) * 12;
+          return {
+            ground: 18 + storm + cells * 8,
+            water: 10,
+            feature: towers + forks,
+            rough: clamp(cells, 0, 1),
+            activity: towers + forks * 1.7
+          };
+        }
+
         case "acid_lakes": {
           const basin = n.ridged(x * 0.018, z * 0.018, 3);
           const crater = Math.pow(1 - basin, 3) * 24;
@@ -407,7 +618,7 @@
     }
 
     sampleLandmark(x, z) {
-      const regionSize = 420;
+      const regionSize = 360;
       const regionX = Math.floor(x / regionSize);
       const regionZ = Math.floor(z / regionSize);
       let best = null;
@@ -419,7 +630,7 @@
           const spawnRoll = this.noise.hash2i(rx * 53 + 11, rz * 53 - 17);
 
           // Very rare points of interest.
-          if (spawnRoll < 0.986) {
+          if (spawnRoll < 0.975) {
             continue;
           }
 
@@ -476,6 +687,59 @@
       return best;
     }
 
+    sampleCreature(x, z, timeSeconds, primaryBiome, secondaryBiome, primaryWeight, liquid, activityLevel) {
+      const cellSize = 30;
+      const cellX = Math.floor(x / cellSize);
+      const cellZ = Math.floor(z / cellSize);
+      const sourceBiome = this.noise.hash2i(cellX * 29 + 3, cellZ * 29 - 7) < primaryWeight
+        ? primaryBiome
+        : secondaryBiome;
+
+      const creatures = BIOME_CREATURES[sourceBiome.id];
+      if (!creatures) {
+        return null;
+      }
+
+      const waterLife = sourceBiome.id === "acid_lakes" || sourceBiome.id === "prismatic_reefs" || sourceBiome.id === "toxic_marsh";
+      if (liquid && !waterLife) {
+        return null;
+      }
+
+      const spawnRoll = this.noise.hash2i(cellX * 173 + 31, cellZ * 173 - 47);
+      const chance = clamp(0.09 + activityLevel * 0.003, 0.09, 0.22);
+      if (spawnRoll < 1 - chance) {
+        return null;
+      }
+
+      const jitterX = (this.noise.hash2i(cellX * 173 - 13, cellZ * 173 + 19) - 0.5) * cellSize * 0.48;
+      const jitterZ = (this.noise.hash2i(cellX * 173 + 41, cellZ * 173 + 59) - 0.5) * cellSize * 0.48;
+      const baseX = cellX * cellSize + cellSize * 0.5 + jitterX;
+      const baseZ = cellZ * cellSize + cellSize * 0.5 + jitterZ;
+
+      const creatureIndex = Math.floor(this.noise.hash2i(cellX * 173 + 71, cellZ * 173 - 83) * creatures.length) % creatures.length;
+      const creature = creatures[creatureIndex];
+      const phase = this.noise.hash2i(cellX * 173 - 101, cellZ * 173 + 107) * Math.PI * 2;
+      const wander = 3 + this.noise.hash2i(cellX * 173 + 127, cellZ * 173 - 131) * 4.5;
+      const angle = phase + timeSeconds * creature.speed * 0.55;
+      const cx = baseX + Math.cos(angle) * wander;
+      const cz = baseZ + Math.sin(angle * 0.8 + phase) * wander;
+      const distance = Math.hypot(x - cx, z - cz);
+      const footprint = liquid ? 4.9 : 3.8;
+
+      if (distance > footprint) {
+        return null;
+      }
+
+      const frame = Math.floor(timeSeconds * (3.5 + creature.speed * 1.5) + phase);
+      const char = creature.chars[Math.abs(frame) % creature.chars.length];
+      return {
+        name: creature.name,
+        char,
+        color: creature.color,
+        glow: liquid ? 0.28 : 0.18
+      };
+    }
+
     sample(x, z, timeSeconds) {
       const blendInfo = this.getBiomeBlend(x, z);
       const primaryBiome = BIOMES[blendInfo.primary];
@@ -492,6 +756,9 @@
       let feature = primary.feature * p + secondary.feature * s;
       const rough = primary.rough * p + secondary.rough * s;
 
+      // Adds extra local detail so the world has richer near-field structure.
+      feature += this.noise.fbm(x * 0.062 + 311, z * 0.062 - 227, 2, 2, 0.58) * 3.2;
+
       const landmark = this.sampleLandmark(x, z);
       if (landmark) {
         ground += landmark.heightDelta;
@@ -504,8 +771,18 @@
       const tileX = Math.floor(x * 1.7);
       const tileZ = Math.floor(z * 1.7);
       const tileRoll = this.noise.hash2i(tileX * 19 + 5, tileZ * 19 - 9);
+      const colorRollA = this.noise.hash2i(tileX * 67 - 21, tileZ * 67 + 15);
+      const colorRollB = this.noise.hash2i(tileX * 97 + 41, tileZ * 97 - 73);
 
       const primarySource = tileRoll < p ? primaryBiome : secondaryBiome;
+      const floraPrimary = BIOME_FLORA[primaryBiome.id];
+      const floraSecondary = BIOME_FLORA[secondaryBiome.id];
+      const floraBlendDensity = floraPrimary.density * p + floraSecondary.density * s;
+      const floraField = this.noise.fbm(x * 0.085 + 73, z * 0.085 - 91, 3, 2, 0.55);
+      const floraPatch = this.noise.ridged(x * 0.18 - 17, z * 0.18 + 29, 2, 2, 0.6);
+      const floraStrength = liquid
+        ? 0
+        : clamp((floraField - (0.7 - floraBlendDensity * 0.28)) * 3.3 + floraPatch * 0.38, 0, 1);
 
       let char;
       let altChar;
@@ -516,6 +793,19 @@
       const hasRuins = primaryBiome.id === "glowing_ruins" || secondaryBiome.id === "glowing_ruins";
       const hasToxic = primaryBiome.id === "toxic_marsh" || secondaryBiome.id === "toxic_marsh";
       const hasAcid = primaryBiome.id === "acid_lakes" || secondaryBiome.id === "acid_lakes";
+      const hasPrismatic = primaryBiome.id === "prismatic_reefs" || secondaryBiome.id === "prismatic_reefs";
+      const hasStorm = primaryBiome.id === "storm_hives" || secondaryBiome.id === "storm_hives";
+      const localActivity = feature + rough * 6;
+      const creature = this.sampleCreature(
+        x,
+        z,
+        timeSeconds,
+        primaryBiome,
+        secondaryBiome,
+        p,
+        liquid,
+        localActivity
+      );
 
       if (liquid) {
         const chars = primarySource.liquidChars;
@@ -525,7 +815,7 @@
         altChar = chars[(index + 1) % chars.length];
         baseColor = mixColor(primaryBiome.colors.liquid, secondaryBiome.colors.liquid, s);
 
-        if (hasToxic || hasAcid) {
+        if (hasToxic || hasAcid || hasPrismatic) {
           glow += 0.12 + 0.12 * (0.5 + 0.5 * Math.sin(timeSeconds * 5 + tileRoll * 20));
         }
       } else if (landmark && landmark.strength > 0.34) {
@@ -537,7 +827,23 @@
           clamp(landmark.strength * 0.85, 0, 1)
         );
         glow += landmark.glow * landmark.strength;
-      } else if (feature > 5) {
+      } else if (floraStrength > 0.3 && (feature > 2.2 || rough > 0.24)) {
+        const floraProfile = tileRoll < p ? floraPrimary : floraSecondary;
+        const floraChars = floraStrength > 0.66 ? floraProfile.tallChars : floraProfile.lowChars;
+        const floraIndex =
+          Math.floor(tileRoll * floraChars.length + floraField * 3.7 + floraPatch * 1.9) % floraChars.length;
+        const palette = floraProfile.colors;
+        const colorIndex = Math.floor(colorRollA * palette.length) % palette.length;
+
+        char = floraChars[floraIndex];
+        altChar = floraChars[(floraIndex + 1) % floraChars.length];
+        baseColor = mixColor(
+          mixColor(primaryBiome.colors.feature, secondaryBiome.colors.feature, s),
+          palette[colorIndex],
+          clamp(0.48 + floraStrength * 0.4, 0, 0.95)
+        );
+        glow += floraProfile.glow * floraStrength;
+      } else if (feature > 4.2) {
         const chars = primarySource.featureChars;
         const baseIndex = Math.floor(tileRoll * chars.length) % chars.length;
         const animatedIndex = Math.floor(timeSeconds * 6 + tileRoll * 8) % chars.length;
@@ -554,7 +860,11 @@
         if (hasRuins) {
           glow += 0.18;
         }
-      } else if (rough > 0.66) {
+
+        if (hasStorm) {
+          glow += 0.14 + 0.16 * clamp(Math.sin(timeSeconds * 9 + x * 0.04) * 0.5 + 0.5, 0, 1);
+        }
+      } else if (rough > 0.62) {
         const chars = primarySource.rockChars;
         const index = Math.floor(tileRoll * chars.length) % chars.length;
         char = chars[index];
@@ -573,6 +883,29 @@
         glow += pulse * 0.08;
       }
 
+      if (hasPrismatic) {
+        const prism = 0.5 + 0.5 * Math.sin(timeSeconds * 1.9 + x * 0.017 + z * 0.011);
+        baseColor = mixColor(baseColor, [255, 126, 226], prism * 0.16);
+        glow += prism * 0.08;
+      }
+
+      if (creature) {
+        char = creature.char;
+        altChar = creature.char;
+        baseColor = mixColor(baseColor, creature.color, 0.86);
+        glow += creature.glow;
+      }
+
+      // Per-tile tint jitter keeps flora and objects from looking flat.
+      const variation = (colorRollA - 0.5) * (liquid ? 18 : 34);
+      const variationB = (colorRollB - 0.5) * (liquid ? 12 : 26);
+      baseColor = offsetColor(
+        baseColor,
+        variation + variationB * 0.4,
+        variationB * 0.35,
+        -variation * 0.28 + variationB * 0.2
+      );
+
       baseColor = scaleColor(baseColor, 1 + glow * 0.34);
 
       const biomeName =
@@ -589,11 +922,13 @@
         glow,
         biomeName,
         primaryBiomeName: primaryBiome.name,
-        landmark
+        landmark,
+        creatureName: creature ? creature.name : null,
+        floraStrength,
+        activityLevel: localActivity + glow * 8 + (creature ? 14 : 0)
       };
     }
   }
-
   // ---------------------------------------------------------------------------
   // ASCII RENDERER
   // ---------------------------------------------------------------------------
@@ -623,8 +958,11 @@
       const cssWidth = window.innerWidth;
       const cssHeight = window.innerHeight;
       const dpr = Math.max(1, window.devicePixelRatio || 1);
+      const compact = cssWidth < 720 || cssHeight < 520;
       this.cssWidth = cssWidth;
       this.cssHeight = cssHeight;
+      this.cellWidth = compact ? 8 : 10;
+      this.cellHeight = compact ? 13 : 16;
 
       this.canvas.width = Math.floor(cssWidth * dpr);
       this.canvas.height = Math.floor(cssHeight * dpr);
@@ -633,13 +971,15 @@
 
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       this.ctx.textBaseline = "top";
-      this.ctx.font = '14px "Cascadia Mono", "Consolas", "Courier New", monospace';
+      this.ctx.font = `${compact ? 12 : 14}px "Cascadia Mono", "Consolas", "Courier New", monospace`;
 
-      this.cols = Math.max(68, Math.min(this.maxCols, Math.floor(cssWidth / this.cellWidth)));
-      this.rows = Math.max(34, Math.min(this.maxRows, Math.floor(cssHeight / this.cellHeight)));
+      const maxCols = compact ? 104 : this.maxCols;
+      const maxRows = compact ? 70 : this.maxRows;
+      this.cols = Math.max(1, Math.min(maxCols, Math.floor(cssWidth / this.cellWidth)));
+      this.rows = Math.max(1, Math.min(maxRows, Math.floor(cssHeight / this.cellHeight)));
 
-      this.offsetX = Math.floor((cssWidth - this.cols * this.cellWidth) * 0.5);
-      this.offsetY = Math.floor((cssHeight - this.rows * this.cellHeight) * 0.5);
+      this.offsetX = Math.max(0, Math.floor((cssWidth - this.cols * this.cellWidth) * 0.5));
+      this.offsetY = Math.max(0, Math.floor((cssHeight - this.rows * this.cellHeight) * 0.5));
 
       this.gridLength = this.cols * this.rows;
       this.chars = new Array(this.gridLength).fill(" ");
@@ -656,7 +996,8 @@
     }
 
     getHorizon(playerPitch) {
-      return this.rows * (0.53 + playerPitch * 0.44);
+      // Sin mapping allows full look-up/look-down without unstable projection spikes.
+      return this.rows * (0.52 + Math.sin(playerPitch) * 1.06);
     }
 
     renderSky(world, timeSeconds, player) {
@@ -673,7 +1014,8 @@
       const tickY = Math.floor(timeSeconds * 2.2);
 
       for (let y = 0; y < this.rows; y += 1) {
-        const t = clamp(y / Math.max(horizon, 1), 0, 1);
+        const topRef = horizon - this.rows * 0.85;
+        const t = clamp((y - topRef) / (this.rows * 0.85), 0, 1);
         const rowColor = colorToCss(mixColor(topSky, lowSky, t));
         const aboveHorizon = y <= horizon;
 
@@ -818,10 +1160,16 @@
     z: 0,
     y: 26,
     yaw: 0,
-    pitch: -0.03
+    pitch: -0.06
   };
 
   const pressed = new Set();
+  const activeMovePointers = new Map();
+  const lookTouch = {
+    pointerId: null,
+    x: 0,
+    y: 0
+  };
   const discoveredBiomes = new Set();
   let particles = [];
 
@@ -847,8 +1195,79 @@
     particles = fresh;
   }
 
+  const SEED_PREFIXES = ["LUMEN", "XENO", "SPORE", "OBELISK", "AETHER", "CRYPT", "MYCEL", "VAPOR", "CHORUS"];
+
+  function scoreSeedCandidate(seedText) {
+    const candidateWorld = new WorldGenerator(seedText);
+    const spawnX = candidateWorld.noise.hash2i(7, 11) * 900 - 450;
+    const spawnZ = candidateWorld.noise.hash2i(-13, 5) * 900 - 450;
+
+    let minHeight = Infinity;
+    let maxHeight = -Infinity;
+    let liquidCount = 0;
+    let activitySum = 0;
+    let landmarkStrength = 0;
+
+    const seenBiomes = new Set();
+    const seenGlyphs = new Set();
+
+    for (let ring = 1; ring <= 5; ring += 1) {
+      const radius = ring * 34;
+      const samples = 8 + ring * 5;
+
+      for (let i = 0; i < samples; i += 1) {
+        const angle = (i / samples) * Math.PI * 2;
+        const x = spawnX + Math.cos(angle) * radius;
+        const z = spawnZ + Math.sin(angle) * radius;
+        const tile = candidateWorld.sample(x, z, 21.4);
+
+        minHeight = Math.min(minHeight, tile.renderHeight);
+        maxHeight = Math.max(maxHeight, tile.renderHeight);
+        seenBiomes.add(tile.primaryBiomeName);
+        seenGlyphs.add(tile.char);
+
+        activitySum += tile.activityLevel + tile.floraStrength * 7;
+        if (tile.liquid) {
+          liquidCount += 1;
+        }
+        if (tile.landmark && tile.landmark.strength > 0.32) {
+          landmarkStrength += tile.landmark.strength;
+        }
+      }
+    }
+
+    const relief = maxHeight - minHeight;
+    return (
+      seenBiomes.size * 42 +
+      seenGlyphs.size * 5 +
+      relief * 2.1 +
+      liquidCount * 1.4 +
+      activitySum * 0.21 +
+      landmarkStrength * 40
+    );
+  }
+
+  function makeInterestingSeed() {
+    let bestSeed = "LUMEN-SPRAWL-7F4E2A";
+    let bestScore = -Infinity;
+
+    for (let i = 0; i < 20; i += 1) {
+      const prefix = SEED_PREFIXES[i % SEED_PREFIXES.length];
+      const suffix = Math.floor(Math.random() * 0xffffff).toString(16).toUpperCase().padStart(6, "0");
+      const candidate = `${prefix}-${suffix}`;
+      const score = scoreSeedCandidate(candidate);
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestSeed = candidate;
+      }
+    }
+
+    return bestSeed;
+  }
+
   function applySeed(seedText) {
-    const cleanSeed = String(seedText).trim() || makeRandomSeed();
+    const cleanSeed = String(seedText).trim() || makeInterestingSeed();
     seedInput.value = cleanSeed;
 
     world = new WorldGenerator(cleanSeed);
@@ -857,7 +1276,7 @@
     player.x = world.noise.hash2i(7, 11) * 900 - 450;
     player.z = world.noise.hash2i(-13, 5) * 900 - 450;
     player.yaw = world.noise.hash2i(17, -19) * Math.PI * 2;
-    player.pitch = -0.03;
+    player.pitch = -0.06;
 
     const spawn = world.sample(player.x, player.z, 0);
     player.y = spawn.renderHeight + CAMERA_EYE_HEIGHT;
@@ -886,9 +1305,36 @@
     }
   }
 
+  function getTouchMoveVector() {
+    let forward = 0;
+    let right = 0;
+
+    for (const vector of activeMovePointers.values()) {
+      forward += vector.forward;
+      right += vector.right;
+    }
+
+    const length = Math.hypot(forward, right);
+    if (length > 1) {
+      forward /= length;
+      right /= length;
+    }
+
+    return { forward, right };
+  }
+
   function updatePlayer(dt, timeSeconds) {
-    const moveForward = (pressed.has("KeyW") ? 1 : 0) - (pressed.has("KeyS") ? 1 : 0);
-    const moveRight = (pressed.has("KeyD") ? 1 : 0) - (pressed.has("KeyA") ? 1 : 0);
+    const touchMove = getTouchMoveVector();
+    const moveForward = clamp(
+      (pressed.has("KeyW") ? 1 : 0) - (pressed.has("KeyS") ? 1 : 0) + touchMove.forward,
+      -1,
+      1
+    );
+    const moveRight = clamp(
+      (pressed.has("KeyD") ? 1 : 0) - (pressed.has("KeyA") ? 1 : 0) + touchMove.right,
+      -1,
+      1
+    );
 
     if (moveForward !== 0 || moveRight !== 0) {
       const inputLength = Math.hypot(moveForward, moveRight);
@@ -914,6 +1360,8 @@
     hudLandmark.textContent =
       groundSample.landmark && groundSample.landmark.strength > 0.32
         ? groundSample.landmark.name
+        : groundSample.creatureName
+          ? groundSample.creatureName
         : "None";
   }
 
@@ -932,17 +1380,122 @@
     pressed.delete(event.code);
   });
 
-  canvas.addEventListener("click", () => {
-    canvas.requestPointerLock();
+  function setPanelCollapsed(collapsed) {
+    uiPanel.classList.toggle("is-collapsed", collapsed);
+    panelToggle.textContent = collapsed ? "Menu" : "Min";
+    panelToggle.setAttribute("aria-expanded", String(!collapsed));
+  }
+
+  const mobilePanelQuery = window.matchMedia("(max-width: 700px), (pointer: coarse)");
+  setPanelCollapsed(mobilePanelQuery.matches);
+  if (mobilePanelQuery.addEventListener) {
+    mobilePanelQuery.addEventListener("change", (event) => {
+      setPanelCollapsed(event.matches);
+    });
+  } else if (mobilePanelQuery.addListener) {
+    mobilePanelQuery.addListener((event) => {
+      setPanelCollapsed(event.matches);
+    });
+  }
+
+  panelToggle.addEventListener("click", () => {
+    setPanelCollapsed(!uiPanel.classList.contains("is-collapsed"));
   });
+
+  function turnPlayer(deltaX, deltaY, yawSensitivity, pitchSensitivity) {
+    player.yaw += deltaX * yawSensitivity;
+    if (player.yaw > Math.PI * 2) {
+      player.yaw -= Math.PI * 2;
+    } else if (player.yaw < 0) {
+      player.yaw += Math.PI * 2;
+    }
+
+    player.pitch = clamp(player.pitch - deltaY * pitchSensitivity, -1.45, 1.45);
+  }
+
+  function clearMovePointer(pointerId) {
+    const entry = activeMovePointers.get(pointerId);
+    if (entry && entry.button) {
+      entry.button.classList.remove("is-active");
+    }
+    activeMovePointers.delete(pointerId);
+  }
+
+  mobileControls.addEventListener("pointerdown", (event) => {
+    const button = event.target.closest(".moveBtn");
+    if (!button) {
+      return;
+    }
+
+    event.preventDefault();
+    button.setPointerCapture(event.pointerId);
+    button.classList.add("is-active");
+    activeMovePointers.set(event.pointerId, {
+      forward: Number(button.dataset.forward || 0),
+      right: Number(button.dataset.right || 0),
+      button
+    });
+  });
+
+  mobileControls.addEventListener("pointerup", (event) => {
+    clearMovePointer(event.pointerId);
+  });
+
+  mobileControls.addEventListener("pointercancel", (event) => {
+    clearMovePointer(event.pointerId);
+  });
+
+  canvas.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "touch" || event.pointerType === "pen") {
+      event.preventDefault();
+      lookTouch.pointerId = event.pointerId;
+      lookTouch.x = event.clientX;
+      lookTouch.y = event.clientY;
+      canvas.setPointerCapture(event.pointerId);
+      return;
+    }
+
+    if (event.button === 0 && canvas.requestPointerLock) {
+      canvas.requestPointerLock();
+    }
+  });
+
+  canvas.addEventListener("pointermove", (event) => {
+    if (lookTouch.pointerId !== event.pointerId) {
+      return;
+    }
+
+    event.preventDefault();
+    const dx = event.clientX - lookTouch.x;
+    const dy = event.clientY - lookTouch.y;
+    lookTouch.x = event.clientX;
+    lookTouch.y = event.clientY;
+    turnPlayer(dx, dy, 0.0042, 0.0034);
+  });
+
+  function clearLookPointer(event) {
+    if (lookTouch.pointerId === event.pointerId) {
+      lookTouch.pointerId = null;
+    }
+  }
+
+  canvas.addEventListener("pointerup", clearLookPointer);
+  canvas.addEventListener("pointercancel", clearLookPointer);
 
   window.addEventListener("mousemove", (event) => {
     if (document.pointerLockElement !== canvas) {
       return;
     }
 
-    player.yaw += event.movementX * 0.0028;
-    player.pitch = clamp(player.pitch - event.movementY * 0.0018, -0.34, 0.3);
+    turnPlayer(event.movementX, event.movementY, 0.0028, 0.00195);
+  });
+
+  window.addEventListener("blur", () => {
+    pressed.clear();
+    for (const pointerId of activeMovePointers.keys()) {
+      clearMovePointer(pointerId);
+    }
+    lookTouch.pointerId = null;
   });
 
   window.addEventListener("resize", () => {
@@ -954,14 +1507,14 @@
 
   applySeedBtn.addEventListener("click", () => {
     const typed = seedInput.value.trim();
-    applySeed(typed || makeRandomSeed());
+    applySeed(typed || makeInterestingSeed());
   });
 
   seedInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
       const typed = seedInput.value.trim();
-      applySeed(typed || makeRandomSeed());
+      applySeed(typed || makeInterestingSeed());
     }
   });
 
@@ -985,9 +1538,7 @@
   }
 
   // Startup
-  seedInput.placeholder = "Type a custom seed, or leave blank for random";
-  applySeed(makeRandomSeed());
+  seedInput.placeholder = "Type a custom seed, or leave blank for curated";
+  applySeed(makeInterestingSeed());
   requestAnimationFrame(frame);
 })();
-
-
